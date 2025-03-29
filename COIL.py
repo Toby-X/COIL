@@ -34,13 +34,13 @@ def SVD_est(L, K):
     
     return Pi, Gamma
 
-def CCAGLM(Y, X, K, lam):
+def COIL(Y, X, K, lam):
     is_optimal, B, L = denoise(Y, X, lam)
     Pi, Gamma = SVD_est(L, K)
 
     return B, Pi, Gamma, is_optimal
 
-def CCAGLM_sparse(Y, X, K, lam):
+def COIL_sparse(Y, X, K, lam):
     is_optimal, B, L = denoise(Y, X, lam)
     Pi, Gamma = SVD_est(L, K)
 
