@@ -1,5 +1,4 @@
 import numpy as np
-import cvxpy as cp
 import scipy.linalg
 from scipy.optimize import minimize
 from scipy.special import softplus
