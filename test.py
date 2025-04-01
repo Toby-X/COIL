@@ -9,7 +9,7 @@ from tqdm import tqdm
 import time
 import itertools
 
-def experiment_fn(seed, param_dict, nstart=10, esp=1e-3, max_iter=500):
+def experiment_fn(seed, param_dict, nstart=5, esp=1e-3, max_iter=1000):
     # Unpack parameters
     n = param_dict['n']
     q = param_dict['q']
@@ -92,7 +92,7 @@ def run_experiment(param_grid, n_exp=100, n_cores=8):
 
     results_df = pd.DataFrame(results)
     
-    results_df.to_csv("COIL_com.csv", index=False)
+    results_df.to_csv("/burg/home/zx2488/COIL/COIL_com.csv", index=False)
     return results_df
 
 
@@ -101,8 +101,8 @@ if __name__ == "__main__":
     param_grid = {
         # 'n': [300, 500],
         # 'q': [100, 300],
-        'n': [100],
-        'q': [50],
+        'n': [300],
+        'q': [100],
         'p': [2],
         'K': [2],
         'tau': [0.2],
@@ -110,5 +110,5 @@ if __name__ == "__main__":
     }
 
     # Run the experiment
-    results_df = run_experiment(param_grid, n_exp=2, n_cores=8)
+    results_df = run_experiment(param_grid, n_exp=100, n_cores=24)
     print(results_df)
