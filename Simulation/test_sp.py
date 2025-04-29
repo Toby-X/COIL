@@ -3,13 +3,13 @@ from JML import JML_sparse
 from COIL import COIL
 import numpy as np
 import pandas as pd
-import multiprocessing as mp
+import multiprocess as mp
 import scipy.linalg
 from tqdm import tqdm
 import time
 import itertools
 
-def experiment_fn(seed, param_dict, nstart=5, esp=1e-3, max_iter=1000):
+def experiment_fn(seed, param_dict, nstart=5, esp=1e-3, max_iter=150):
     # Unpack parameters
     n = param_dict['n']
     q = param_dict['q']
@@ -19,7 +19,7 @@ def experiment_fn(seed, param_dict, nstart=5, esp=1e-3, max_iter=1000):
     rho = param_dict['rho']
 
     # Generate data
-    Y, X, B, Pi, Gamma = gen_data_sparse(n, q, p, K, tau, rho, seed)
+    Y, X, B, Pi, Gamma = gen_data_sparse(n, q, p, K, tau, rho, seed, sparse=True)
     
     # Run JML
     np.random.seed(seed)
@@ -92,7 +92,7 @@ def run_experiment(param_grid, n_exp=100, n_cores=8):
 
     results_df = pd.DataFrame(results)
     
-    results_df.to_csv("/burg/home/zx2488/COIL/COIL_com.csv", index=False)
+    results_df.to_csv("COIL_com_sparse.csv", index=False)
     return results_df
 
 
@@ -110,5 +110,5 @@ if __name__ == "__main__":
     }
 
     # Run the experiment
-    results_df = run_experiment(param_grid, n_exp=100, n_cores=24)
+    results_df = run_experiment(param_grid, n_exp=100, n_cores=28)
     print(results_df)

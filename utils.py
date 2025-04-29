@@ -79,6 +79,7 @@ def gen_data_sparse(n, q, p, K, tau, rho, seed, sparse = False):
     Gamma = np.kron(I, vk.reshape(-1, 1)).reshape(K * len(vk), K)
 
     B = np.zeros((q, p))
+    B[:p, :] = rho
     if sparse:
         for s in range(p):
             B[int(5*s-4):int(5*s+1),s] = rho

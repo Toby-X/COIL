@@ -4,7 +4,7 @@ from scipy.optimize import minimize
 from scipy.special import softplus, expit
 from utils import rotate_sparse, rotate_ortho
 
-def JML(Y, X, K, esp = 1e-3, max_iter = 1000):
+def JML(Y, X, K, esp = 1e-3, max_iter = 5000):
     q = Y.shape[1]
     p = X.shape[1]
     n = X.shape[0]
@@ -29,11 +29,16 @@ def JML(Y, X, K, esp = 1e-3, max_iter = 1000):
         shape = (q, p + K)
         BGamma0 = np.hstack([B_old, Gamma_old])
         BGamma0 = BGamma0.flatten()
-        opt_res = minimize(obj_fn, BGamma0, args=(shape,), method='L-BFGS-B', jac=True)
+        # opt_res = minimize(obj_fn, BGamma0, args=(shape,), method='L-BFGS-B', jac=True)
+        opt_res = minimize(obj_fn, BGamma0, args=(shape,), method='Newton-CG', jac=True)
         
         BGamma = opt_res.x.reshape(shape)
         B = BGamma[:,:p]
         Gamma = BGamma[:,p:]
+        # if opt_res.success == False:
+        #     raise AssertionError("Optimization failed")
+        # else:
+        #     return B, Gamma
         return B, Gamma
     
     def iter_BG_fix(B, Gamma, Z_old):
@@ -47,7 +52,12 @@ def JML(Y, X, K, esp = 1e-3, max_iter = 1000):
         
         shape = Z_old.shape
         Z_old = Z_old.flatten()
-        opt_res = minimize(obj_fn, Z_old, args=(shape,), method='L-BFGS-B', jac=True)
+        # opt_res = minimize(obj_fn, Z_old, args=(shape,), method='L-BFGS-B', jac=True)
+        opt_res = minimize(obj_fn, Z_old, args=(shape,), method='Newton-CG', jac=True)
+        # if opt_res.success == False:
+        #     raise AssertionError("Optimization failed")
+        # else:
+        #     return opt_res.x.reshape(shape)
         return opt_res.x.reshape(shape)
     
     Z = Z0
@@ -68,7 +78,7 @@ def JML(Y, X, K, esp = 1e-3, max_iter = 1000):
 
     return B, Z_new, Gamma, loss, iter
 
-def JML_sparse(Y, X, K, nstart = 5, esp = 1e-3, max_iter = 1000):
+def JML_sparse(Y, X, K, nstart = 5, esp = 1e-3, max_iter = 5000):
     B, Z, Gamma, loss, iter = JML(Y, X, K, esp, max_iter)
 
     for i in range(nstart-1):
@@ -83,7 +93,7 @@ def JML_sparse(Y, X, K, nstart = 5, esp = 1e-3, max_iter = 1000):
     B, Z, Gamma = rotate_sparse(X, B, Z, Gamma)
     return B, Z, Gamma, loss, iter
 
-def JML_ortho(Y, X, K, nstart = 5, esp = 1e-3, max_iter = 1000):
+def JML_ortho(Y, X, K, nstart = 5, esp = 1e-3, max_iter = 5000):
     B, Z, Gamma, loss, iter = JML(Y, X, K, esp, max_iter)
 
     for i in range(nstart-1):
